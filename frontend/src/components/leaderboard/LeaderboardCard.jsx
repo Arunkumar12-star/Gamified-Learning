@@ -56,6 +56,19 @@ const LeaderboardCard = ({ entry, rank, isCurrentUser }) => {
                 <span>🔥 {entry.currentStreak} days</span>
                 <span>🎖️ {entry.badgeCount} badges</span>
               </div>
+              {entry.topBadgeTier && (
+                <div className="mt-1">
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                    entry.topBadgeTier === 'gold' ? 'bg-yellow-100 text-yellow-800' :
+                    entry.topBadgeTier === 'silver' ? 'bg-gray-100 text-gray-800' :
+                    entry.topBadgeTier === 'bronze' ? 'bg-orange-100 text-orange-800' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {entry.topBadgeTier === 'gold' ? '🥇' : entry.topBadgeTier === 'silver' ? '🥈' : '🥉'}
+                    <span className="ml-1">{entry.topBadgeName || (entry.topBadgeTier.charAt(0).toUpperCase() + entry.topBadgeTier.slice(1))} Badge</span>
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>

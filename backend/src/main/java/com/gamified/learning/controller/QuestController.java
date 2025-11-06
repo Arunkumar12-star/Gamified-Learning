@@ -62,7 +62,7 @@ public class QuestController {
             } else if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
                 username = jwtService.extractUsername(tokenHeader.substring(7));
             } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Not authenticated"));
+                return ResponseEntity.status(401).body(ApiResponse.error("Not authenticated"));
             }
             var user = (com.gamified.learning.model.User) userService.loadUserByUsername(username);
             var result = questService.completeQuest(user.getId(), questId);
@@ -86,12 +86,14 @@ public class QuestController {
             } else if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
                 username = jwtService.extractUsername(tokenHeader.substring(7));
             } else {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Not authenticated"));
+                return ResponseEntity.status(401).body(ApiResponse.error("Not authenticated"));
             }
             var user = (com.gamified.learning.model.User) userService.loadUserByUsername(username);
             var result = questService.validateQuizAndCompleteQuest(user.getId(), questId, answers);
-            // Always award badges on completion
-            badgeService.checkAndAwardBadges(user.getId(), "QUEST_COMPLETION");
+            // Award badges only if completion succeeded
+            if (Boolean.TRUE.equals(result.get("success"))) {
+                badgeService.checkAndAwardBadges(user.getId(), "QUEST_COMPLETION");
+            }
             return ResponseEntity.ok(ApiResponse.success("Quiz submitted", result));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));

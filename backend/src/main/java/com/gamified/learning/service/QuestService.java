@@ -58,11 +58,17 @@ public class QuestService {
 
         // Validate quiz presence
         if (quest.getQuestions() == null || quest.getQuestions().isEmpty()) {
-            throw new RuntimeException("Quest has no quiz questions");
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "Quest has no quiz questions");
+            return result;
         }
         // Validate all questions are answered
         if (answers == null || answers.size() != quest.getQuestions().size()) {
-            throw new RuntimeException("All questions must be answered");
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "All questions must be answered");
+            return result;
         }
         // Prevent duplicate completion
         if (questProgressRepository.existsByUserIdAndQuestId(userId, questId)) {
@@ -104,7 +110,10 @@ public class QuestService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (questProgressRepository.existsByUserIdAndQuestId(userId, questId)) {
-            throw new RuntimeException("Quest already completed");
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", false);
+            result.put("message", "Quest already completed");
+            return result;
         }
 
         // Record quest completion
